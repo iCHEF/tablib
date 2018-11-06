@@ -4,7 +4,8 @@
 """
 
 import sys
-
+import six
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 
 if sys.version_info[0] > 2:
     from io import BytesIO
@@ -115,6 +116,7 @@ def dset_sheet(dataset, ws, freeze_panes=True):
     for i, row in enumerate(_package):
         row_number = i + 1
         for j, col in enumerate(row):
+            
             col_idx = get_column_letter(j + 1)
 
             # bold headers
@@ -134,17 +136,19 @@ def dset_sheet(dataset, ws, freeze_panes=True):
                 style.font.bold = True
 
             # wrap the rest
-            else:
-                try:
-                    str_col_value = unicode(col)
-                except TypeError:
-                    str_col_value = ''
-
-                    if '\n' in str_col_value:
-                        style = ws.get_style('%s%s' % (col_idx, row_number))
-                        style.alignment.wrap_text
+            elif isinstance(col, six.string_types):
+                col = remove_illegal_excelx_character(col)
+                if '\n' in col:
+                    style = ws.get_style('%s%s' % (col_idx, row_number))
+                    style.alignment.wrap_text = True
 
             try:
                 ws.cell('%s%s' % (col_idx, row_number)).value = col
             except (ValueError, TypeError, DataTypeException):
                 ws.cell('%s%s' % (col_idx, row_number)).value = unicode(col)
+
+
+def remove_illegal_excelx_character(value):
+    # type: (six.string_types) -> (six.string_types)
+    clean_value = ILLEGAL_CHARACTERS_RE.sub(r'', value)
+    return clean_value
