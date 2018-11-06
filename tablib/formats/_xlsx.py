@@ -18,7 +18,7 @@ import tablib
 
 Workbook = openpyxl.workbook.Workbook
 ExcelWriter = openpyxl.writer.excel.ExcelWriter
-get_column_letter = openpyxl.cell.get_column_letter
+get_column_letter = openpyxl.utils.get_column_letter
 DataTypeException = openpyxl.shared.exc.DataTypeException
 
 from tablib.compat import unicode
