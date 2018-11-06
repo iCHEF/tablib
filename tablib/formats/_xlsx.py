@@ -13,7 +13,7 @@ if sys.version_info[0] > 2:
 else:
     from cStringIO import StringIO as BytesIO
 
-from tablib.compat import openpyxl
+import openpyxl
 import tablib
 
 Workbook = openpyxl.workbook.Workbook
@@ -28,8 +28,7 @@ title = 'xlsx'
 extensions = ('xlsx',)
 
 
-def detect(stream):
-    """Returns True if given stream is a readable excel file."""
+def detect(stream): """Returns True if given stream is a readable excel file."""
     try:
         openpyxl.reader.excel.load_workbook(stream)
         return True
@@ -54,7 +53,8 @@ def export_book(databook, freeze_panes=True):
     """Returns XLSX representation of DataBook."""
 
     wb = Workbook()
-    wb.worksheets = []
+    for sheet in wb.worksheets:
+        wb.remove_sheet(sheet)
     for i, dset in enumerate(databook._datasets):
         ws = wb.create_sheet()
         ws.title = dset.title if dset.title else 'Sheet%s' % (i)
@@ -114,45 +114,42 @@ def dset_sheet(dataset, ws, freeze_panes=True):
         _offset = i
         _package.insert((sep[0] + _offset), (sep[1],))
 
+    bold = openpyxl.styles.Font(bold=True)
+    wrap_text = openpyxl.styles.Alignment(wrap_text=True)
+
     for i, row in enumerate(_package):
         row_number = i + 1
         for j, col in enumerate(row):
             col_idx = get_column_letter(j + 1)
+            cell = ws['%s%s' % (col_idx, row_number)]
 
             # bold headers
             if (row_number == 1) and dataset.headers:
                 # ws.cell('%s%s'%(col_idx, row_number)).value = unicode(
                     # '%s' % col, errors='ignore')
                 style = ws.get_style('%s%s' % (col_idx, row_number))
-                style.font.bold = True
+                style.font = bold
                 if freeze_panes:
-                    # As already done in #53, but after Merge lost:
                     #  Export Freeze only after first Line
                     ws.freeze_panes = 'A2'
 
             # bold separators
             elif len(row) < dataset.width:
                 style = ws.get_style('%s%s' % (col_idx, row_number))
-                style.font.bold = True
+                style.font.bold = bold
 
             # wrap the rest
-            else:
-                try:
-                    str_col_value = unicode(col)
-                except TypeError:
-                    str_col_value = ''
 
-                    if '\n' in str_col_value:
-                        style = ws.get_style('%s%s' % (col_idx, row_number))
-                        style.alignment.wrap_text
+            if isinstance(col, six.string_types):
+                col = remove_illegal_excelx_character(col)
+                if '\n' in col:
+                    style = ws.get_style('%s%s' % (col_idx, row_number))
+                    style.alignment = wrap_text
 
             try:
-
-                if isinstance(col, six.string_types):
-                    col = remove_illegal_excelx_character(col)
-                ws.cell('%s%s' % (col_idx, row_number)).value = col
+                cell.value = col
             except (ValueError, TypeError, DataTypeException):
-                ws.cell('%s%s' % (col_idx, row_number)).value = unicode(col)
+                cell.value = unicode(col)
 
 
 def remove_illegal_excelx_character(value):

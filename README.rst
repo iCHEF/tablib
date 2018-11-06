@@ -1,7 +1,7 @@
 Tablib: format-agnostic tabular dataset library
 ===============================================
 
-.. image:: https://travis-ci.org/kennethreitz/tablib.svg?branch=develop
+.. image:: https://travis-ci.org/kennethreitz/tablib.svg?branch=master
     :target: https://travis-ci.org/kennethreitz/tablib
 
 ::
@@ -21,13 +21,16 @@ Output formats supported:
 - Excel (Sets + Books)
 - JSON (Sets + Books)
 - YAML (Sets + Books)
+- Pandas DataFrames (Sets)
 - HTML (Sets)
 - TSV (Sets)
-- OSD (Sets)
+- ODS (Sets)
 - CSV (Sets)
 - DBF (Sets)
 
 Note that tablib *purposefully* excludes XML support. It always will. (Note: This is a joke. Pull requests are welcome.)
+
+If you're interested in financially supporting Kenneth Reitz open source, consider `visiting this link <https://cash.me/$KennethReitz>`_. Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.
 
 Overview
 --------
@@ -64,13 +67,13 @@ Intelligently add new columns: ::
 
 Slice rows:  ::
 
-    >>> print data[:2]
+    >>> print(data[:2])
     [('John', 'Adams', 90), ('George', 'Washington', 67)]
 
 
 Slice columns by header: ::
 
-    >>> print data['first_name']
+    >>> print(data['first_name'])
     ['John', 'George', 'Henry']
 
 Easily delete rows: ::
@@ -86,7 +89,7 @@ JSON!
 +++++
 ::
 
-	>>> print data.json
+	>>> print(data.export('json'))
 	[
 	  {
 	    "last_name": "Adams",
@@ -105,7 +108,7 @@ YAML!
 +++++
 ::
 
-	>>> print data.yaml
+	>>> print(data.export('yaml'))
 	- {age: 90, first_name: John, last_name: Adams}
 	- {age: 83, first_name: Henry, last_name: Ford}
 
@@ -113,7 +116,7 @@ CSV...
 ++++++
 ::
 
-	>>> print data.csv
+	>>> print(data.export('csv'))
 	first_name,last_name,age
 	John,Adams,90
 	Henry,Ford,83
@@ -123,14 +126,23 @@ EXCEL!
 ::
 
 	>>> with open('people.xls', 'wb') as f:
-	...     f.write(data.xls)
+	...     f.write(data.export('xls'))
 
 DBF!
 ++++
 ::
 
     >>> with open('people.dbf', 'wb') as f:
-    ...     f.write(data.dbf)
+    ...     f.write(data.export('dbf'))
+
+Pandas DataFrame!
++++++++++++++++++
+::
+
+    >>> print(data.export('df')):
+          first_name last_name  age
+    0       John     Adams   90
+    1      Henry      Ford   83
 
 It's that easy.
 
@@ -140,7 +152,7 @@ Installation
 
 To install tablib, simply: ::
 
-	$ pip install tablib
+	$ pip install tablib[pandas]
 
 Make sure to check out `Tablib on PyPi <https://pypi.python.org/pypi/tablib/>`_!
 
