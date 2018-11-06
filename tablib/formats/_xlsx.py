@@ -28,7 +28,8 @@ title = 'xlsx'
 extensions = ('xlsx',)
 
 
-def detect(stream): """Returns True if given stream is a readable excel file."""
+def detect(stream):
+    """Returns True if given stream is a readable excel file."""
     try:
         openpyxl.reader.excel.load_workbook(stream)
         return True
