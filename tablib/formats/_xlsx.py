@@ -5,6 +5,8 @@
 
 import sys
 
+import six
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 
 if sys.version_info[0] > 2:
     from io import BytesIO
@@ -145,6 +147,15 @@ def dset_sheet(dataset, ws, freeze_panes=True):
                         style.alignment.wrap_text
 
             try:
+
+                if isinstance(col, six.string_types):
+                    col = remove_illegal_excelx_character(col)
                 ws.cell('%s%s' % (col_idx, row_number)).value = col
             except (ValueError, TypeError, DataTypeException):
                 ws.cell('%s%s' % (col_idx, row_number)).value = unicode(col)
+
+
+def remove_illegal_excelx_character(value):
+    # type: (six.string_types) -> (six.string_types)
+    clean_value = ILLEGAL_CHARACTERS_RE.sub(r'', value)
+    return clean_value
