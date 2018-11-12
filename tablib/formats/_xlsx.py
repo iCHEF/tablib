@@ -5,7 +5,13 @@
 
 import sys
 import six
-from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+
+###
+# XXX: This import requires different verion (other than tablib's builtin
+#      version). We inline this definition here.
+#from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+import re
+ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
 
 if sys.version_info[0] > 2:
     from io import BytesIO
