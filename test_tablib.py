@@ -6,6 +6,10 @@ import json
 import unittest
 import sys
 import os
+import StringIO
+import zipfile
+from xml.etree import ElementTree
+import re
 import tablib
 from tablib.compat import markup, unicode, is_py3
 from tablib.core import Row
@@ -377,6 +381,23 @@ class TablibTestCase(unittest.TestCase):
         self.assertTrue('textasciitilde' in output)
         self.assertFalse('^' in output)
         self.assertTrue('textasciicircum' in output)
+
+
+    def test_xlsx_export_remove_illegal_characters(self):
+        d = tablib.Dataset(["Text"])
+        d.append(["\x08\x1ftest"])
+        xlsx = d.xlsx
+        xlsx_as_zip = zipfile.ZipFile(StringIO.StringIO(xlsx))
+        shared_string_xml = xlsx_as_zip.read("xl/sharedStrings.xml")
+        root = ElementTree.fromstring(shared_string_xml)
+        ns = ""
+        m = re.match(r"^({[^}]*})", root.tag)
+        if m:
+            ns = m.group(0)
+        shared_strings = [e.text for e in root.iter(tag="{}t".format(ns))]
+
+        self.assertTrue("Text" in shared_strings)
+        self.assertTrue("test" in shared_strings)
 
 
     def test_unicode_append(self):
