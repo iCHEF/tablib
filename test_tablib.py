@@ -14,10 +14,6 @@ import tablib
 from tablib.compat import markup, unicode, is_py3
 from tablib.core import Row
 
-
-
-
-
 class TablibTestCase(unittest.TestCase):
     """Tablib test cases."""
 

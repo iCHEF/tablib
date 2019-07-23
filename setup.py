@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sys
 
-import tablib
+# import tablib
 
 try:
     from setuptools import setup
@@ -37,7 +38,8 @@ if sys.argv[-1] == 'test':
     sys.exit(bool(errors))
 
 packages = [
-    'tablib', 'tablib.formats',
+    'tablib',
+    'tablib.formats',
     'tablib.packages',
     'tablib.packages.omnijson',
     'tablib.packages.unicodecsv',
@@ -61,10 +63,13 @@ packages = [
     'tablib.packages.dbfpy3'
 ]
 
+with open('tablib/core.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
 
 setup(
     name='tablib',
-    version=tablib.__version__,
+    version=version,
     description='Format agnostic tabular data library (XLS, JSON, YAML, CSV)',
     long_description=(open('README.rst').read() + '\n\n' +
         open('HISTORY.rst').read()),
