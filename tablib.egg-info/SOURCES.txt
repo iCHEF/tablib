@@ -12,6 +12,7 @@ tablib/core.py
 tablib.egg-info/PKG-INFO
 tablib.egg-info/SOURCES.txt
 tablib.egg-info/dependency_links.txt
+tablib.egg-info/requires.txt
 tablib.egg-info/top_level.txt
 tablib/formats/__init__.py
 tablib/formats/_csv.py

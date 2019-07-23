@@ -60,7 +60,7 @@ packages = [
     'tablib.packages.openpyxl3.reader',
     'tablib.packages.openpyxl3.writer',
     'tablib.packages.yaml3',
-    'tablib.packages.dbfpy3'
+    'tablib.packages.dbfpy3',
 ]
 
 with open('tablib/core.py', 'r') as fd:
@@ -94,4 +94,5 @@ setup(
         'Programming Language :: Python :: 3.4',
     ),
     tests_require=['pytest'],
+    install_requires=['six']
 )

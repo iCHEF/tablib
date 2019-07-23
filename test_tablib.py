@@ -6,12 +6,11 @@ import json
 import unittest
 import sys
 import os
-import StringIO
 import zipfile
 from xml.etree import ElementTree
 import re
 import tablib
-from tablib.compat import markup, unicode, is_py3
+from tablib.compat import markup, unicode, is_py3, BytesIO
 from tablib.core import Row
 
 class TablibTestCase(unittest.TestCase):
@@ -383,7 +382,7 @@ class TablibTestCase(unittest.TestCase):
         d = tablib.Dataset(["Text"])
         d.append(["\x08\x1ftest"])
         xlsx = d.xlsx
-        xlsx_as_zip = zipfile.ZipFile(StringIO.StringIO(xlsx))
+        xlsx_as_zip = zipfile.ZipFile(BytesIO(xlsx))
         shared_string_xml = xlsx_as_zip.read("xl/sharedStrings.xml")
         root = ElementTree.fromstring(shared_string_xml)
         ns = ""
