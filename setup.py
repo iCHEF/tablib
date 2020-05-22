@@ -13,6 +13,11 @@ except ImportError:
     from distutils.core import setup
 
 
+if sys.argv[-1] == 'build':
+    print("required: pip install wheel")
+    os.system("python setup.py sdist bdist_wheel")
+    sys.exit()
+
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist upload")
     sys.exit()
